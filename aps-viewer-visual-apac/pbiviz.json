@@ -1,0 +1,24 @@
+{
+    "visual": {
+        "name": "aps-viewer-visual-apac",
+        "displayName": "APS Viewer Visual APAC (0.0.8.1)",
+        "guid": "aps_viewer_visual_apac_a4f2990a03324cf79eb44f982719df44",
+        "visualClassName": "Visual",
+        "version": "0.0.8.1",
+        "description": "Visual for displaying shared 2D/3D designs from Autodesk Platform Services - APAC version.",
+        "supportUrl": "https://github.com/autodesk-platform-services/aps-powerbi-tools",
+        "gitHubUrl": "https://github.com/autodesk-platform-services/aps-powerbi-tools"
+    },
+    "apiVersion": "5.9.1",
+    "author": {
+        "name": "Autodesk Platform Services - BILT ANZ Demo",
+        "email": "apsdev.biltanz@gmail.com"
+    },
+    "assets": {
+        "icon": "assets/icon.png"
+    },
+    "style": "style/visual.less",
+    "capabilities": "capabilities.json",
+    "dependencies": null,
+    "stringResources": []
+}
