@@ -1,5 +1,13 @@
 # Autodesk Platform Services (VSCode Extension)
 
+## Acknowledgement
+Source codes shared in this repo were originated from open source porject shared by [Petr Broz](https://github.com/petrbroz):
+- _https://github.com/petrbroz/vscode-forge-tools_
+
+Source codes have been updated to support the newly established APAC region (Australia) of Autodesk Construction Cloud.
+
+## Original Context (with updates)
+
 ![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/petrbroz.vscode-forge-tools.svg)
 ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/petrbroz.vscode-forge-tools.svg)
 ![Visual Studio Marketplace Downloads](https://img.shields.io/visual-studio-marketplace/d/petrbroz.vscode-forge-tools.svg)
@@ -14,14 +22,14 @@
 
 ## Requirements
 
-- [Visual Studio Code](https://code.visualstudio.com) version 1.92.0 or newer
+- [Visual Studio Code](https://code.visualstudio.com) version **1.92.0** or newer
 - APS app credentials ([tutorial](https://aps.autodesk.com/en/docs/oauth/v2/tutorials/create-app))
 
 ## Installation
 
 While in Visual Studio Code:
 
-1. Switch to the _Extensions_ sidebar (`Cmd`+`Shift`+`X` on macOS or `Ctrl`+`Shift`+`X` on Windows), search for the _Autodesk Platform Services_ extension, and install it.
+1. Switch to the _Extensions_ sidebar (`Cmd`+`Shift`+`X` on macOS or `Ctrl`+`Shift`+`X` on Windows), search for the _Autodesk Platform Services_ extension, and install it. :warning: The current verion of this extension found from the extension marketplace does note support ACC Region. You can find the deployalbe `vscode-forge-tools-apac-2.7.1.vsix` file from **_root_** folder and install it manually by following this article on medium.com: (https://medium.com/@malekrizwan08/how-to-install-any-extension-in-visual-studio-code-manually-39bad1908cd4).
 
 ![Install extension](./docs/01-install-extension.gif)
 
@@ -39,7 +47,7 @@ The extension exposes the following settings:
   - `title` (required) - unique name of the environment (will be shown in the status bar and listed when switching between other environments)
   - `clientId` (required) - APS client ID
   - `clientSecret` (required) - APS client secret
-  - `region` - data region for storing design data; can be `US` (default) or `EMEA`
+  - `region` - data region for storing design data; can be `US` (default), `EMEA` or `APAC`
 - `autodesk.forge.authentication.port` - server port to use during 3-legged authentication workflows
 - `autodesk.forge.data.defaultContentType` - content type to use for all files uploaded to OSS
 - `autodesk.forge.data.uploadChunkSize` - size of individual chunks (in bytes) when uploading files to OSS with the resumable functionality
@@ -104,7 +112,7 @@ The Model Derivative service lets you store derivatives in a region of your choi
 ## Development
 
 - clone the repository
-- install and setup dependencies: `yarn install`
+- install and setup dependencies: ~~`yarn install`~~ :triangular_flag_on_post: `yarn` _command may not work as blocked by your enterprise firewall settings. Please use_ `npm install`.   
 - open the project in vscode and launch the _Launch Extension_ task; new vscode window will open
 - make sure you have at least one set of APS credentials configured (see [Getting Started](#getting-started) and [Extension Settings](##extension-settings))
 - click on the APS icon in the sidebar and start browsing

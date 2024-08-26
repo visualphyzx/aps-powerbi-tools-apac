@@ -23,6 +23,7 @@ This data connector is designed for scenarios where the person authoring the Pow
 ### Running locally
 
 - Clone this repository
+- Open the folder `aps-props-connector-apac` in a seperate VS Code Window. :triangular_flag_on_post: _If expanding folder `aps-props-connector-apac` from its parent folder `aps-powerbi-tools-apac`, commands from `Power Query SDK` will not be triggered._
 - Create a _secrets.json_ file in the project folder, and populate it with your APS application client ID and secret:
 
 ```json

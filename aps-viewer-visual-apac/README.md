@@ -3,7 +3,7 @@
 ## Acknowledgement
 Source codes shared in this repo were originated from open source porjects _https://github.com/autodesk-platform-services/aps-powerbi-tools_ shared by Autodesk Platform Services.
 
-Source codes have been updated to support newly established APAC region (Australia) of Autodesk Construction Cloud. Further details are to be provided.
+Source codes have been updated to support newly established APAC region (Australia) of Autodesk Construction Cloud. 
 
 # Original Context (with updates)
 
@@ -54,7 +54,7 @@ If you don't want to build your own web service, consider using the [APS Shares 
 - Update [pbiviz.json](./pbiviz.json) with your own visual name, description, etc.
 - If needed, update the [capabilities.json](./capabilities.json) file, restricting the websites that the visual will have access to (for example, replacing the `[ "*" ]` list under the `"privileges"` section with `[ "https://your-custom-app.com", "https://*.autodesk.com" ]`)
 - Build the *.pbiviz file using `npm run package`
-- Import the newly created *.pbiviz file from the _dist_ subfolder into your Power BI report
+- Import the newly created *.pbiviz file from the _dist_ subfolder into your Power BI report. :memo: _a ready-to-use pbiviz file can be found under `dist` folder, you can use it for your initial test_.
 
 ## FAQ
 
