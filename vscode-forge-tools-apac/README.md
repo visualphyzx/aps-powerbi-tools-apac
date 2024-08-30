@@ -1,7 +1,7 @@
 # Autodesk Platform Services (VSCode Extension)
 
 ## Acknowledgement
-Source codes shared in this repo were originated from open source porject shared by [Petr Broz](https://github.com/petrbroz):
+Source codes shared in this repo were originated from open-source project shared by [Petr Broz](https://github.com/petrbroz):
 - _https://github.com/petrbroz/vscode-forge-tools_
 
 Source codes have been updated to support the newly established APAC region (Australia) of Autodesk Construction Cloud.

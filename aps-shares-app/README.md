@@ -1,7 +1,7 @@
 # APS Shares App - Compatible with APAC region 
 
 ## Acknowledgement
-Source codes shared in this repo were originated from open source porjects _https://github.com/autodesk-platform-services/aps-powerbi-tools_ shared by Autodesk Platform Services.
+Source codes shared in this repo were originated from open-source project _https://github.com/autodesk-platform-services/aps-powerbi-tools_ shared by Autodesk Platform Services.
 
 Source codes have been updated to support newly established APAC region (Australia) of Autodesk Construction Cloud. Further details are to be provided.
 
