@@ -18,7 +18,7 @@
         {
             "displayName": "Values",
             "name": "values",
-            "kind": "Measure"
+            "kind": "Grouping"
         }
     ],
     "dataViewMappings": [

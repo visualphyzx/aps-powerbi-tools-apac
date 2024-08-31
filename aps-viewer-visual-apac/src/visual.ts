@@ -197,7 +197,7 @@ export class Visual implements IVisual {
                 .createSelectionId();
 
             const color: string = this.isColorDataFilled ? <string>row[colIdxDict["color"]] : '#FFFFFF';
-            const opacity: number = Math.floor(this.isOpacityDataFilled ? <number>row[colIdxDict["opacity"]] : 1);
+            const opacity: number = this.isOpacityDataFilled ? <number>row[colIdxDict["opacity"]] : 1;
             const symbol: string = this.isSymbolDataFilled ? <string>row[colIdxDict["symbol"]] : null;
             const values: Array<PrimitiveValue> = [];
             if (this.isValueDataFilled) {
