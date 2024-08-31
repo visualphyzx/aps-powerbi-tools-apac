@@ -17,7 +17,7 @@ Collection of the tools for accessing [Autodesk Platform Services](https://aps.a
 
 ![Screenshot](./screenshot.png)
 
-<iframe title="BILT_ANZ_2024_APS-Viewer-Demo" width="1024" height="1060" src="https://app.powerbi.com/view?r=eyJrIjoiNDE5NDViMjctZGUzYS00NDgyLTg1MGEtMTIyOTFiYzEzNGQwIiwidCI6ImJkMTNhZjA1LTE4YWEtNDQ2My1hMjhkLWVkYmNiMjdmMWUwMiJ9" frameborder="0" allowFullScreen="true"></iframe>
+[Link to Power BI Demo Report](https://app.powerbi.com/view?r=eyJrIjoiNDE5NDViMjctZGUzYS00NDgyLTg1MGEtMTIyOTFiYzEzNGQwIiwidCI6ImJkMTNhZjA1LTE4YWEtNDQ2My1hMjhkLWVkYmNiMjdmMWUwMiJ9)
 
 ### Tools
 
