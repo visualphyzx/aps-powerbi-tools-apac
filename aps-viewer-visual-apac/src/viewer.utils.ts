@@ -16,7 +16,6 @@ export function initializeViewerRuntime(options: Autodesk.Viewing.InitializerOpt
         runtime.options = { ...options };
         runtime.ready = (async function () {
             window.DISABLE_INDEXED_DB = true;
-
             await loadScript('https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.js');
             await loadStylesheet('https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css');
             return new Promise((resolve) => Autodesk.Viewing.Initializer(runtime.options, resolve));

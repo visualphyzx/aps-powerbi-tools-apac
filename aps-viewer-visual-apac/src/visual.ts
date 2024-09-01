@@ -16,7 +16,7 @@ import DataViewTableRow = powerbi.DataViewTableRow;
 import PrimitiveValue = powerbi.PrimitiveValue;
 
 import { VisualSettingsModel } from './settings';
-import { initializeViewerRuntime, loadModel, IdMapping } from './viewer.utils';
+import { initializeViewerRuntime, loadModel } from './viewer.utils';
 
 /**
     * Interface for Forge model element Data Point for interaction with other visuals
@@ -84,7 +84,7 @@ export class Visual implements IVisual {
         this.container = options.element;
         this.getAccessToken = this.getAccessToken.bind(this);
         this.onPropertiesLoaded = this.onPropertiesLoaded.bind(this);
-        //this.onSelectionChanged = this.onSelectionChanged.bind(this);
+        this.onSelectionChanged = this.onSelectionChanged.bind(this);
         // Create an instance of the selection manager                                                 
         this.selectionManager = this.host.createSelectionManager();
     }
@@ -94,7 +94,7 @@ export class Visual implements IVisual {
      * @param options Additional visual update options.
      */
     public async update(options: VisualUpdateOptions): Promise<void> {
-        // this.logVisualUpdateOptions(options);
+        this.logVisualUpdateOptions(options);
         this.formattingSettings = this.formattingSettingsService.populateFormattingSettingsModel(VisualSettingsModel, options.dataViews[0]);
 
         const { accessTokenEndpoint } = this.formattingSettings.viewerCard;
@@ -112,20 +112,16 @@ export class Visual implements IVisual {
             this.updateModel();
         }
 
-        if (options.dataViews.length > 0) {
-            this.currentDataView = options.dataViews[0];
-        }
-
         if (options.type == 4) //resizing or moving
         {
-            //console.log("Resizing or Moving!");
+            console.debug("Resizing or Moving!");
             return;
         }
 
         let hasTable: boolean = false;
-        const dataView = options.dataViews[0];
+        this.currentDataView = options.dataViews[0];
 
-        if (options.dataViews || dataView) {
+        if (options.dataViews || this.currentDataView) {
             if (options.dataViews[0].table) {
                 hasTable = true;
             }
@@ -135,12 +131,12 @@ export class Visual implements IVisual {
         }
 
         // Prepare data
-        this.isDbIdDataFilled = _.findIndex(dataView.metadata.columns, col => col.roles.hasOwnProperty("dbId")) !== -1;
+        this.isDbIdDataFilled = _.findIndex(this.currentDataView.metadata.columns, col => col.roles.hasOwnProperty("dbId")) !== -1;
         //this.isCategoryDataFilled = _.findIndex(dataView.metadata.columns, col => col.roles.hasOwnProperty("category")) !== -1;
-        this.isColorDataFilled = _.findIndex(dataView.metadata.columns, col => col.roles.hasOwnProperty("color")) !== -1;
-        this.isOpacityDataFilled = _.findIndex(dataView.metadata.columns, col => col.roles.hasOwnProperty("opacity")) !== -1;
-        this.isSymbolDataFilled = _.findIndex(dataView.metadata.columns, col => col.roles.hasOwnProperty("symbol")) !== -1;
-        this.isValueDataFilled = _.findIndex(dataView.metadata.columns, col => col.roles.hasOwnProperty("values")) !== -1;
+        this.isColorDataFilled = _.findIndex(this.currentDataView.metadata.columns, col => col.roles.hasOwnProperty("color")) !== -1;
+        this.isOpacityDataFilled = _.findIndex(this.currentDataView.metadata.columns, col => col.roles.hasOwnProperty("opacity")) !== -1;
+        this.isSymbolDataFilled = _.findIndex(this.currentDataView.metadata.columns, col => col.roles.hasOwnProperty("symbol")) !== -1;
+        this.isValueDataFilled = _.findIndex(this.currentDataView.metadata.columns, col => col.roles.hasOwnProperty("values")) !== -1;
 
         let colIdxDict: { [colName: string]: any } = {
             dbId: null,
@@ -205,11 +201,8 @@ export class Visual implements IVisual {
                     values.push(v);
                 });
             }
-            // materialId = [color]+[opacity]
 
             const matKeyName = color + "-" + opacity.toString();
-            // only add to material 
-            //console.log(this.forgeCustomMaterialDict[matKeyName], progress, color);
             if (this.viewer && this.isColorDataFilled && this.forgeCustomMaterialDict[matKeyName] == undefined) {
                 this.forgeCustomMaterialDict[matKeyName] = this.createPhongMaterial(color, opacity, matKeyName)
             };
@@ -226,21 +219,16 @@ export class Visual implements IVisual {
 
             this.forgeDataPoints.push(forgePt);
         });
-        console.log(this.forgeDataPoints);
-        console.log(this.forgeCustomMaterialDict);
 
         if(this.viewer) {
             if (this.isColorDataFilled && this.forgeDataPoints && this.forgeDataPoints.length > 0) {
                 this.forgeDataPoints.forEach((dp: ForgeElementDataPoint, index: number) => {
-                    //user first 100 for test, it's working but very slow and overlay on top
                     const dbId: number = dp.dbId;
                     const color: string = dp.color;
                     const opacity: number = dp.opacity;
                     if (dbId) 
                     {
                         this.viewer.showAll();
-                        // have to hide all children from dbId at the parent level
-                        // hide parent
                         if (opacity == 0) {
                             this.viewer.hide([dbId]);
                         }
@@ -249,9 +237,6 @@ export class Visual implements IVisual {
                                 // hide children
                                 this.viewer.hide(ids);
                             }
-                            //ok
-                            //console.log("dbId", dbId, "->", ids);
-                            //console.log("mat", this.forgeCustomMaterialDict[dp.forgeMatKey]);
                             this.setMeshPhongMaterial(ids, this.forgeCustomMaterialDict[dp.forgeMatKey]);
                         });
                     }
@@ -259,29 +244,12 @@ export class Visual implements IVisual {
                 this.viewer.impl.invalidate(true, true, false);
             }
 
-            // Isolation model
             this.viewer.showAll();
             this.viewer.clearSelection();
             this.viewer.isolate(dbIds);
             this.viewer.fitToView(dbIds);
         }
 
-        
-
-        /*
-        if (this.viewer) {
-            const externalIds = this.currentDataView.table.rows || [];
-            const isDataFilterApplied = this.currentDataView.metadata && (this.currentDataView.metadata as any).isDataFilterApplied;
-            if (externalIds.length > 0 && isDataFilterApplied) {
-                const dbids = await this.idMapping.getDbids(externalIds as unknown as string[]);
-                this.viewer.isolate(dbids);
-                this.viewer.fitToView(dbids);
-            } else {
-                this.viewer.isolate();
-                this.viewer.fitToView();
-            }
-        }
-        */
     }
 
     /**
@@ -311,7 +279,7 @@ export class Visual implements IVisual {
     }
 
     /**
-     * Initializes the viewer runtime.
+     * Initialize the viewer runtime.
      */
     private async initializeViewer(): Promise<void> {
         try {
@@ -319,13 +287,12 @@ export class Visual implements IVisual {
             this.container.innerText = '';
             this.viewer = new Autodesk.Viewing.GuiViewer3D(this.container);
             this.viewer.start();
-            this.viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, this.onPropertiesLoaded);
-            //this.viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this.onSelectionChanged);
+            // this.viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, this.onPropertiesLoaded);
+            // this.viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this.onSelectionChanged);
             if (this.urn) {
                 this.updateModel();
             }
             this.viewer.addEventListener(Autodesk.Viewing.MODEL_ROOT_LOADED_EVENT, () => {
-            // Force perspective view
             this.viewer.autocam.homeVector.isPerspective = true;
             this.viewer.autocam.homeVector.isOrtho = false;
             this.viewer.autocam.originalHomeVector.isPerspective = true;
@@ -333,7 +300,7 @@ export class Visual implements IVisual {
             this.viewer.autocam.toPerspective();
         });
         } catch (err) {
-            this.showNotification('Could not initialize viewer runtime. Please see console for more details.');
+            this.showNotification('Could not initialize viewer runtime. Please check console for more details.');
             console.error(err);
         }
     }
@@ -367,7 +334,6 @@ export class Visual implements IVisual {
         if (this.model && this.model.getData().urn !== this.urn) {
             this.viewer.unloadModel(this.model);
             this.model = null;
-            //this.idMapping = null;
         }
 
         try {
@@ -381,20 +347,23 @@ export class Visual implements IVisual {
     }
 
     private async onPropertiesLoaded() {
-        //this.idMapping = new IdMapping(this.model);
+        console.log("Model properties loaded!");
     }
 
-    /*
+    
     private async onSelectionChanged() {
-        const allExternalIds = this.currentDataView.table.rows;
-        if (!allExternalIds) {
+        console.log("Slection changed!");
+        return;
+        // TO DO - optmise the logic and interaction
+        const allObjectIds = this.currentDataView.table.rows;
+        if (!allObjectIds) {
             return;
         }
         const selectedDbids = this.viewer.getSelection();
-        const selectedExternalIds = await this.idMapping.getExternalIds(selectedDbids);
+        //console.log(selectedDbids);
         const selectionIds: powerbi.extensibility.ISelectionId[] = [];
-        for (const selectedExternalId of selectedExternalIds) {
-            const rowIndex = allExternalIds.findIndex(row => row[0] === selectedExternalId);
+        for (const objId of allObjectIds) {
+            const rowIndex = allObjectIds.findIndex(row => row[0] === selectedDbids[0]);
             if (rowIndex !== -1) {
                 const selectionId = this.host.createSelectionIdBuilder()
                     .withTable(this.currentDataView.table, rowIndex)
@@ -404,7 +373,7 @@ export class Visual implements IVisual {
         }
         this.selectionManager.select(selectionIds);
     }
-    */
+    
 
     private logVisualUpdateOptions(options: VisualUpdateOptions) {
         const EditMode = {
@@ -442,13 +411,19 @@ export class Visual implements IVisual {
         }
     }
 
-    private createPhongMaterial(colorhex: string, opacity: number, overlayName: string) {
+    /**
+     * Create a new MeshPhongMaterial with the specifiled color and opacity
+     * @param colorhex color in hex string format e.g. "#FF0000"
+     * @param opacity opacify - effective betwee 0 to 1
+     * @param matName material name
+     */
+    private createPhongMaterial(colorhex: string, opacity: number, matName: string): THREE.MeshPhongMaterial {
         if (!this.viewer) {
             return null
         }
         const colorThreeStr = colorhex.replace('#', '0x');
         const colorValue = parseInt(colorThreeStr, 16);
-        const colorName = Visual.newGUID();
+        const colorName = matName + "_" + Visual.newGUID();
         const material = new THREE.MeshPhongMaterial({
             color: colorValue,
             opacity: opacity,
@@ -465,6 +440,9 @@ export class Visual implements IVisual {
         return material;
     }
 
+    /**
+     * Generate a new GUID
+     */
     public static newGUID(): string {
         let d = new Date().getTime();
         let guid = 'xxxx-xxxx-xxxx-xxxx-xxxx'.replace(
@@ -477,6 +455,11 @@ export class Visual implements IVisual {
         return guid;
     }
 
+    /**
+     * Get all deepest Objects IDs from any ObjectIDs - can be optimised
+     * @param dbIds Object IDs from APS Model Viewer
+     * @param material Object IDs at deepest
+     */
     private getLeafGeometryNodes(_dbIds: number[]): Promise<number[]> {
         return new Promise((resolve, reject) => {
             try {
@@ -511,6 +494,11 @@ export class Visual implements IVisual {
         });
     }
 
+    /**
+     * Set material by Object IDs
+     * @param dbIds Object IDs from APS Model Viewer
+     * @param material MeshPhongMaterial
+     */
      private setMeshPhongMaterial(dbIds: number[], material: THREE.MeshPhongMaterial): void {
         if (!this.viewer) {
             return;
@@ -527,43 +515,9 @@ export class Visual implements IVisual {
                 });
             }
         }
-        else //2D // https://forge.autodesk.com/blog/working-2d-and-3d-scenes-and-geometry-forge-viewer //https://stackoverflow.com/questions/39861563/autodesk-forge-viewer-f2d-get-frag-from-dbid
-        {
-            //TODO: do nothing for 2D for now
-            /*
-            console.log(frags.fragments.dbId2fragId);
-            console.log(frags.fragments.fragId2dbId);
-            let fragsAffected  =  [];
-            for (const dbId of dbIds) {
-                console.log(dbId);
-                const fIds = frags.fragments.dbId2fragId[dbId]; //fIds could a single number or an array
-                console.log(fIds);
-                if(fIds instanceof Array)
-                {
-                    fIds.forEach(element => {
-                        if(!fragsAffected.includes(element))
-                        {
-                            fragsAffected.push(element);
-                        }
-                    });
-                }
-                else
-                {
-                    if(!fragsAffected.includes(fIds))
-                    {
-                        fragsAffected.push(fIds);
-                    }
-                }
-            }
-            
-            console.log("fragsAffected", fragsAffected);
-
-            for(const fragId of fragsAffected)
-            {
-                console.log("frags", frags);
-                frags.setMaterial(fragId, material);
-            }
-            */
+        else {
+            console.warn("Not 3D Geometry");
+            // TO DO: How to handle 2D Geometry
         }
     }
 }
