@@ -28,6 +28,9 @@ Collection of the tools for accessing [Autodesk Platform Services](https://aps.a
 
 ### Major Updates
 
+#### 05/09/2024
+- Including BILT ANZ 2024 presentation and handout files
+
 #### 25/08/2024
 - Including vscode-forge-tools-apac, updated to support ACC APAC Region.
 
